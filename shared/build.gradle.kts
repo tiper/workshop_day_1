@@ -1,5 +1,6 @@
 import org.gradle.api.JavaVersion.VERSION_11
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -12,7 +13,7 @@ kotlin {
             jvmTarget.set(JVM_11)
         }
     }
-
+    val xcf = XCFramework("Shared")
     listOf(
         iosX64(),
         iosArm64(),
@@ -20,9 +21,12 @@ kotlin {
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "Shared"
+            binaryOption("bundleId", "org.example.$name")
+            xcf.add(this)
+            isStatic = true
         }
     }
-
+    
     sourceSets {
         commonMain.dependencies {
             // put your Multiplatform dependencies here
